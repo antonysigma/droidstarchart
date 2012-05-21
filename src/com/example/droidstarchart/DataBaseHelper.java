@@ -18,8 +18,8 @@ import android.util.Log;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
 	private static final String DB_PATH = "/data/data/com.example.droidstarchart/databases/";
-	private static final String DB_NAME = "ppm_lite.db";
-	private static final String DB_TABLE = "ppm";
+	private static final String DB_NAME = "star_lite.db";
+	//private static final String DB_TABLE = "ppm";
 	private static final int DB_VERSION = 1;
 	private static final String TAG = "DataBaseHelper";
 	int id = 0;
@@ -52,11 +52,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w(TAG, "Upgrading DB from version " + oldVersion + " to "
+/*		Log.w(TAG, "Upgrading DB from version " + oldVersion + " to "
 				+ newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + DB_TABLE);
 		onCreate(db);
-	}
+*/	}
 
 	public void createDataBase() {
 		createDB();
@@ -111,7 +111,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	public Cursor getStars() {
-		return myDataBase.rawQuery("SELECT ra,de,mag FROM ppm", null);
+	public Cursor getStars(float mag) {
+		return myDataBase.rawQuery(
+				"SELECT ra,de,mag FROM ppm WHERE mag<="+mag, null);
+	}
+	
+	public Cursor getConstellationLine(float mag){
+		return myDataBase.rawQuery(
+				"SELECT A.ra,A.de,B.ra,B.de FROM constellation_line L, major_star A, major_star B WHERE max(A.mag,B.mag)<="+mag+
+				" AND L.star1=A._id AND L.star2=B._id"
+				, null);
+	
 	}
 }

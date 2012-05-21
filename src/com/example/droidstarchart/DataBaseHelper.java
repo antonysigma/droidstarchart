@@ -66,7 +66,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		if (!dbExists()) {
 		 copyDataBase();
 		 }
-		else copyDataBase();
+		//else copyDataBase();
 	}
 
 	private boolean dbExists() {
@@ -121,6 +121,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 				"SELECT A.ra,A.de,B.ra,B.de FROM constellation_line L, major_star A, major_star B WHERE max(A.mag,B.mag)<="+mag+
 				" AND L.star1=A._id AND L.star2=B._id"
 				, null);
+	}
 	
+	public Cursor getConstellationLabel(){
+		return myDataBase.rawQuery("SELECT abbr,(avg(B.ra)+avg(A.ra))/2,(avg(B.de)+avg(A.de))/2 from constellation_line L, major_star A, major_star B WHERE L.star1=A._id and L.star2=B._id group by abbr",null);
 	}
 }

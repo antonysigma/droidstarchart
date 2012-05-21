@@ -54,7 +54,7 @@ public class drawView extends View {
 	private void drawGrid(Canvas canvas) {
 		
 		/** Draw RA grids */
-		for(float ra = 0; ra<=24; ra+=2)
+		for(float ra = 0; ra<=24; ra++)
 		{
 			Star start_ra = new Star(ra,-90);
 			Star stop_ra = new Star(ra,90);
@@ -82,7 +82,7 @@ public class drawView extends View {
 
 	private void drawStar(Canvas canvas) {
 		/** Get all stars */
-		float mag_limit = 4;
+		float mag_limit = 6;
 		Cursor result = myDbHelper.getStars(mag_limit);
 
 		for (result.moveToFirst();!result.isAfterLast();result.moveToNext()) {
@@ -103,7 +103,7 @@ public class drawView extends View {
 
 	private void drawConstellation(Canvas canvas) {
 		/** Get all stars */
-		float mag_limit = 4;
+		float mag_limit = 6;
 		Cursor result = myDbHelper.getConstellationLine(mag_limit);
 
 		for (result.moveToFirst();!result.isAfterLast();result.moveToNext()) {
@@ -120,7 +120,20 @@ public class drawView extends View {
 			// Log.i(TAG,de+"");
 		}
 		result.close();
-
+	}
+	
+	private void drawConstellationLabel(Canvas canvas){
+		Cursor result = myDbHelper.getConstellationLabel();
+		
+		for (result.moveToFirst();!result.isAfterLast();result.moveToNext()) {
+			String abbr = result.getString(0);
+			Star position = new Star(result.getFloat(1),result.getFloat(2));
+			
+			Point screen = position.toRect(center, zoom, screenSize);
+			
+			if(screen.inScreen(screenSize))
+			canvas.drawText(abbr, screen.x, screen.y, blue);
+		}
 	}
 
 	@Override
@@ -128,6 +141,7 @@ public class drawView extends View {
 		drawGrid(canvas);
 		drawStar(canvas);
 		drawConstellation(canvas);
+		drawConstellationLabel(canvas);
 	}
 
 }

@@ -1,0 +1,21 @@
+--BEGIN;
+CREATE TABLE ngc(
+NGC INTEGER,
+n_NGC STRING,
+Type INTEGER,
+RAh INTEGER, RAm FLOAT, 
+DEd INTEGER, DEm INTEGER,
+GLON FLOAT, GLAT FLOAT, 
+Xpos INTEGER, Ypos INTEGER,
+Mag FLOAT, r_Mag INTEGER,
+OldDesc STRING,
+NewDesc STRING,
+Notes STRING,
+primary key (NGC,n_NGC));
+
+.separator "\t"
+.import ngc.csv ngc
+
+ANALYZE;
+--COMMIT;
+VACUUM;

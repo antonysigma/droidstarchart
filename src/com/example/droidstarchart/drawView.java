@@ -10,12 +10,12 @@ import android.view.Display;
 import android.view.View;
 
 public class drawView extends View {
-	Paint black = new Paint();
-	Paint gray = new Paint();
-	Paint blue = new Paint();
+	private Paint star_paint = new Paint();
+	private Paint grid_paint = new Paint();
+	private Paint constellation_paint = new Paint();
 	
 	/** Copy database to device */
-	DataBaseHelper myDbHelper = null;
+	private DataBaseHelper myDbHelper = null;
 
 	/** Debug information */
 	private static final String TAG = "drawView";
@@ -31,9 +31,10 @@ public class drawView extends View {
 		super(context);
 
 		/** Setup default color */
-		black.setColor(Color.BLACK);
-		gray.setColor(Color.GRAY);
-		blue.setColor(Color.BLUE);
+		star_paint.setColor(Color.BLACK);
+		grid_paint.setColor(Color.GRAY);
+		constellation_paint.setColor(Color.BLUE);
+		constellation_paint.setStrokeWidth((float) 2);
 		setBackgroundColor(Color.WHITE);
 
 		/** Setup screen variables */
@@ -63,7 +64,9 @@ public class drawView extends View {
 			Point stop = stop_ra.toRect(center,zoom,screenSize);
 			
 			// Draw vertical grid
-			canvas.drawLine(start.x,start.y,stop.x,stop.y,gray);
+			canvas.drawLine(start.x,start.y,stop.x,stop.y,grid_paint);
+			//Draw RA label
+			canvas.drawText(ra+"h",start.x,screenSize.y-100,grid_paint);
 		}		
 		
 		/** Draw DE grids */
@@ -75,8 +78,10 @@ public class drawView extends View {
 			Point start = start_de.toRect(center,zoom,screenSize);
 			Point stop = stop_de.toRect(center,zoom,screenSize);
 			
-			// Draw vertical grid
-			canvas.drawLine(start.x,start.y,stop.x,stop.y,gray);
+			// Draw horizontal grid
+			canvas.drawLine(start.x,start.y,stop.x,stop.y,grid_paint);
+			//Draw RA label
+			canvas.drawText(de+"deg",0,start.y,grid_paint);
 		}
 	}
 
@@ -93,7 +98,7 @@ public class drawView extends View {
 			Point screen = star.toRect(center, zoom, screenSize);
 			
 			if(screen.inScreen(screenSize))
-				canvas.drawCircle(screen.x, screen.y, (7 - mag) / 2, black);
+				canvas.drawCircle(screen.x, screen.y, (7 - mag), star_paint);
 
 			// Log.i(TAG,de+"");
 		}
@@ -115,7 +120,7 @@ public class drawView extends View {
 			Point screen2 = star2.toRect(center, zoom, screenSize);
 			
 			if(screen1.inScreen(screenSize) || screen2.inScreen(screenSize))
-				canvas.drawLine(screen1.x, screen1.y, screen2.x, screen2.y, blue);
+				canvas.drawLine(screen1.x, screen1.y, screen2.x, screen2.y, constellation_paint);
 
 			// Log.i(TAG,de+"");
 		}
@@ -132,7 +137,7 @@ public class drawView extends View {
 			Point screen = position.toRect(center, zoom, screenSize);
 			
 			if(screen.inScreen(screenSize))
-			canvas.drawText(abbr, screen.x, screen.y, blue);
+			canvas.drawText(abbr, screen.x, screen.y, constellation_paint);
 		}
 	}
 
@@ -143,5 +148,10 @@ public class drawView extends View {
 		drawConstellation(canvas);
 		drawConstellationLabel(canvas);
 	}
+	
+	public void setCenter(Star _center){
+		center = _center;
+	}
+	
 
 }

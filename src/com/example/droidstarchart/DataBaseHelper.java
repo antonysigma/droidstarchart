@@ -4,7 +4,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Locale;
 import java.util.Random;
 
 import android.content.Context;
@@ -17,7 +16,7 @@ import android.util.Log;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
-	private static final String DB_PATH = "/data/data/com.example.droidstarchart/databases/";
+	private static final String DB_PATH = "/data/data/com.example.droidstarchart/";
 	private static final String DB_NAME = "star_lite.db";
 	//private static final String DB_TABLE = "ppm";
 	private static final int DB_VERSION = 1;
@@ -30,6 +29,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	public DataBaseHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 		this.myContext = context;
+		
+		if(!dbExists()){
+			Log.w(TAG, "Database not found. Replacing with default database...");
+			createDataBase();
+		}
+			openDataBase();
 	}
 
 	public void openDataBase() throws SQLException {
@@ -47,7 +52,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		createDB();
+		createDataBase();
 	}
 
 	@Override
@@ -59,27 +64,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 */	}
 
 	public void createDataBase() {
-		createDB();
-	}
-
-	private void createDB() {
-		if (!dbExists()) {
-		 copyDataBase();
-		 }
-		//else copyDataBase();
+			try {
+			String myPath = DB_PATH + DB_NAME;
+			myDataBase = SQLiteDatabase.openDatabase(myPath, null,
+					SQLiteDatabase.CREATE_IF_NECESSARY);
+			myDataBase.close();
+			
+			} catch (SQLiteException e) {
+				Log.e(TAG, "Cannot create empty database.",e);
+			}
+		   copyDataBase();
 	}
 
 	private boolean dbExists() {
 		try {
 			openDataBase();
-		} catch (SQLiteException e) {
-			Log.w(TAG, "Database not found. Replacing with default database...");
-		}
+		} catch (SQLiteException e) {}
 		if (myDataBase != null) {
 			myDataBase.close();
 			return true;
 		}
-		else
 		return false;
 	}
 

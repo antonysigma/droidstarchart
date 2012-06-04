@@ -21,10 +21,11 @@ public class DroidStarChartActivity extends Activity {
 		/** Draw something */
 		drawView DrawView = new drawView(this,display);
 		
+		/*
 		Random rand = new Random();
 	    float ra = rand.nextFloat() * 24;
-	    float de = rand.nextFloat() * 180 - 90;
-	    Star center = new Star(ra, de);
+	    float de = rand.nextFloat() * 180 - 90;*/
+	    Star center = new Star(24, 0);
 	    DrawView.setCenter(center);
 		setContentView(DrawView);
 	/*	

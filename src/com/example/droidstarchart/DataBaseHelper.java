@@ -88,16 +88,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	}
 
 	private void copyDataBase() {
-//TODO split datafile to 1MB chunks
 	try {
-			// Open your local db as the input stream
-			InputStream myinput = myContext.getAssets().open(DB_NAME);
-
 			// Path to the just created empty db
 			String outfilename = DB_PATH + DB_NAME;
 
 			// Open the empty db as the output stream
 			OutputStream myoutput = new FileOutputStream(outfilename);
+
+			// For each 1MB file fragment, ...
+			for(int i=0;i<=1;i++)
+			{
+				// Open your local db as the input stream
+				InputStream myinput = myContext.getAssets().open("s0"+i+".db");
 
 			// transfer byte to inputfile to outputfile
 			byte[] buffer = new byte[1024];
@@ -105,11 +107,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 			while ((length = myinput.read(buffer)) > 0) {
 				myoutput.write(buffer, 0, length);
 			}
+			myinput.close();
+			}
 
 			// Close the streams
 			myoutput.flush();
 			myoutput.close();
-			myinput.close();
 		} catch (IOException e) {
 			Log.e(TAG, "Cannot overwrite database.",e);
 		}
@@ -122,12 +125,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	
 	public Cursor getConstellationLine(float mag){
 		return myDataBase.rawQuery(
-				"SELECT A.ra,A.de,B.ra,B.de FROM constellation_line L, major_star A, major_star B WHERE max(A.mag,B.mag)<="+mag+
+				"SELECT A.ra,A.de,B.ra,B.de FROM constellation_line L, ppm A, ppm B WHERE max(A.mag,B.mag)<="+mag+
 				" AND L.star1=A._id AND L.star2=B._id"
 				, null);
 	}
 	
 	public Cursor getConstellationLabel(){
-		return myDataBase.rawQuery("SELECT abbr,(avg(B.ra)+avg(A.ra))/2,(avg(B.de)+avg(A.de))/2 from constellation_line L, major_star A, major_star B WHERE L.star1=A._id and L.star2=B._id group by abbr",null);
+		return myDataBase.rawQuery("SELECT abbr,avg(ra),avg(de) from constellation_boundary B GROUP BY abbr",null);
 	}
 }

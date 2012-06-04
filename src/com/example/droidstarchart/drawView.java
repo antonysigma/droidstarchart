@@ -34,7 +34,7 @@ public class drawView extends View {
 		star_paint.setColor(Color.BLACK);
 		grid_paint.setColor(Color.GRAY);
 		constellation_paint.setColor(Color.BLUE);
-		constellation_paint.setStrokeWidth((float) 2);
+		//constellation_paint.setStrokeWidth((float) 2);
 		setBackgroundColor(Color.WHITE);
 
 		/** Setup screen variables */
@@ -144,8 +144,8 @@ public class drawView extends View {
 	@Override
 	public void onDraw(Canvas canvas) {
 		drawGrid(canvas);
-		drawStar(canvas);
 		drawConstellation(canvas);
+		drawStar(canvas);
 		drawConstellationLabel(canvas);
 	}
 	

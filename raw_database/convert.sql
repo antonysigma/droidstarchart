@@ -29,7 +29,7 @@ create view closest_star as
 SELECT L._id as id, abbr, A._id as star1, B._id as star2, A.mag as mag1, B.mag as mag2
 FROM lines L, ppm A, ppm B
 WHERE
-abs(ra1 - A.ra) < 1 and abs(de1 - A.de) < 1 and abs(ra2 - B.ra) < 1 and abs(de2 - B.de) < 1
+abs(ra1 - A.ra)*360/24. < 1 and abs(de1 - A.de) < 1 and abs(ra2 - B.ra)*360/24. < 1 and abs(de2 - B.de) < 1
 and A._id < B._id;
 
 create table constellation_line(abbr string, star1 integer, star2 integer, primary key(abbr,star1,star2),

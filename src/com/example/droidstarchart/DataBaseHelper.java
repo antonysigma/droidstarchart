@@ -133,4 +133,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	public Cursor getConstellationLabel(){
 		return myDataBase.rawQuery("SELECT abbr,avg(ra),avg(de) from constellation_boundary B GROUP BY abbr",null);
 	}
+	
+	public Cursor getConstellationBoundary(){
+		return myDataBase.rawQuery(
+				"SELECT A.abbr,A.ra,A.de,B.ra,B.de FROM constellation_boundary A, constellation_boundary B WHERE A._id+1=B._id AND A.abbr=B.abbr"
+				, null);
+	}
 }

@@ -13,6 +13,7 @@ public class drawView extends View {
 	private Paint star_paint = new Paint();
 	private Paint grid_paint = new Paint();
 	private Paint constellation_paint = new Paint();
+	private Paint boundary_paint = new Paint();
 	
 	/** Copy database to device */
 	private DataBaseHelper myDbHelper = null;
@@ -35,6 +36,7 @@ public class drawView extends View {
 		grid_paint.setColor(Color.GRAY);
 		constellation_paint.setColor(Color.BLUE);
 		//constellation_paint.setStrokeWidth((float) 2);
+		boundary_paint.setColor(Color.GRAY);
 		setBackgroundColor(Color.WHITE);
 
 		/** Setup screen variables */
@@ -55,7 +57,7 @@ public class drawView extends View {
 	private void drawGrid(Canvas canvas) {
 		
 		/** Draw RA grids */
-		for(float ra = 0; ra<=24; ra++)
+		for(float ra = 0; ra<24; ra++)
 		{
 			Star start_ra = new Star(ra,-90);
 			Star stop_ra = new Star(ra,90);
@@ -79,12 +81,26 @@ public class drawView extends View {
 			Point stop = stop_de.toRect(center,zoom,screenSize);
 			
 			// Draw horizontal grid
-			canvas.drawLine(start.x,start.y,stop.x,stop.y,grid_paint);
+			canvas.drawLine(0,start.y,screenSize.x,stop.y,grid_paint);
 			//Draw RA label
 			canvas.drawText(de+"deg",0,start.y,grid_paint);
 		}
 	}
 
+	private void drawBoundary(Canvas canvas){
+		Cursor result = myDbHelper.getConstellationBoundary();
+		
+		for (result.moveToFirst();!result.isAfterLast();result.moveToNext()) {
+			Star start = new Star(result.getFloat(1), result.getFloat(2));
+			Star stop = new Star(result.getFloat(3), result.getFloat(4));
+			
+			Point start_screen = start.toRect(center, zoom, screenSize);
+			Point stop_screen = stop.toRect(center, zoom, screenSize);
+
+				canvas.drawLine(start_screen.x,start_screen.y,stop_screen.x,stop_screen.y,boundary_paint);
+		}
+	}
+	
 	private void drawStar(Canvas canvas) {
 		/** Get all stars */
 		float mag_limit = 6;
@@ -143,7 +159,7 @@ public class drawView extends View {
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		drawGrid(canvas);
+		drawBoundary(canvas);
 		drawConstellation(canvas);
 		drawStar(canvas);
 		drawConstellationLabel(canvas);

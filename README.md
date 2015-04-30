@@ -3,7 +3,7 @@
 Droidstarchart intends to revive the elegant but obsolete [Mobilestarchart](http://mobilestarchart.sourceforge.net/) 
 in the world of high-end smartphones.
 
-Unline many apps that bombards you with fancy animations and photos of planets, 
+Unline many apps that bombard you with fancy animations and photos of planets, 
 this app takes away those distractions and presents you a "vanilla-flavoured" star map,
 so you can focus on the serious scientific details of each star.
 For example, it can run on e-ink based Android device to create a Marauder's Map experience (yes just like Harry Potter!)

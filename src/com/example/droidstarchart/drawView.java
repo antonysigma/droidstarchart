@@ -87,6 +87,19 @@ public class drawView extends View {
 		}
 	}
 
+	private boolean checkOutofboundary(Point start, Point stop, Point screenSize){
+		float left = Math.min(start.x, stop.x);
+		float right = Math.max(start.x, stop.x);
+		if (left < 0 && right > screenSize.x)
+			return true;
+
+		float top = Math.min(start.y, stop.y);
+		float bottom = Math.max(start.y, stop.y);
+		if (top < 0 && bottom > screenSize.x)
+			return true;
+		return false;
+	}
+
 	private void drawBoundary(Canvas canvas){
 		Cursor result = myDbHelper.getConstellationBoundary();
 		
@@ -97,7 +110,10 @@ public class drawView extends View {
 			Point start_screen = start.toRect(center, zoom, screenSize);
 			Point stop_screen = stop.toRect(center, zoom, screenSize);
 
-				canvas.drawLine(start_screen.x,start_screen.y,stop_screen.x,stop_screen.y,boundary_paint);
+			if (checkOutofboundary(start_screen, stop_screen, screenSize))
+				continue;
+
+			canvas.drawLine(start_screen.x,start_screen.y,stop_screen.x,stop_screen.y,boundary_paint);
 		}
 	}
 	

@@ -35,8 +35,8 @@ public class drawView extends View {
 		star_paint.setColor(Color.BLACK);
 		grid_paint.setColor(Color.GRAY);
 		constellation_paint.setColor(Color.BLUE);
-		//constellation_paint.setStrokeWidth((float) 2);
-		boundary_paint.setColor(Color.GRAY);
+		constellation_paint.setStrokeWidth((float) 2);
+		boundary_paint.setColor(Color.GREEN);
 		setBackgroundColor(Color.WHITE);
 
 		/** Setup screen variables */
@@ -150,9 +150,11 @@ public class drawView extends View {
 			
 			Point screen1 = star1.toRect(center, zoom, screenSize);
 			Point screen2 = star2.toRect(center, zoom, screenSize);
-			
-			if(screen1.inScreen(screenSize) || screen2.inScreen(screenSize))
-				canvas.drawLine(screen1.x, screen1.y, screen2.x, screen2.y, constellation_paint);
+
+			if (checkOutofboundary(screen1, screen2, screenSize))
+				continue;
+
+			canvas.drawLine(screen1.x, screen1.y, screen2.x, screen2.y, constellation_paint);
 
 			// Log.i(TAG,de+"");
 		}
@@ -176,6 +178,7 @@ public class drawView extends View {
 	@Override
 	public void onDraw(Canvas canvas) {
 		drawBoundary(canvas);
+		drawGrid(canvas);
 		drawConstellation(canvas);
 		drawStar(canvas);
 		drawConstellationLabel(canvas);

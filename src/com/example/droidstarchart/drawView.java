@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.MotionEvent;
 
 public class drawView extends View {
 	private Paint star_paint = new Paint();
@@ -45,7 +46,7 @@ public class drawView extends View {
 		Log.i(TAG, "Screen dimension: " + screenSize.x + ", " + screenSize.y);
 
 		/** Setup default center and zoom level */
-		center = new Star((float) 6.752477,(float) -16.7161); //***Testing: position of Sirius
+		center = new Star(6.752477f,-16.7161f); //***Testing: position of Sirius
 		zoom = screenSize.x * 2;
 
 		/** Setup database */
@@ -68,7 +69,7 @@ public class drawView extends View {
 			// Draw vertical grid
 			canvas.drawLine(start.x,start.y,stop.x,stop.y,grid_paint);
 			//Draw RA label
-			canvas.drawText(ra+"h",start.x,screenSize.y-100,grid_paint);
+			canvas.drawText(ra+"h",start.x,screenSize.y-50,grid_paint);
 		}		
 		
 		/** Draw DE grids */
@@ -83,7 +84,7 @@ public class drawView extends View {
 			// Draw horizontal grid
 			canvas.drawLine(0,start.y,screenSize.x,stop.y,grid_paint);
 			//Draw RA label
-			canvas.drawText(de+"deg",0,start.y,grid_paint);
+			canvas.drawText(de+"deg",5,start.y,grid_paint);
 		}
 	}
 
@@ -185,7 +186,42 @@ public class drawView extends View {
 	}
 	
 	public void setCenter(Star _center){
-		center = _center;
+        center = _center;
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+        float zone_x = event.getX() / screenSize.x;
+        float zone_y = event.getY() / screenSize.y;
+
+        // Left
+        if (zone_x > 0.67 &&
+                zone_y>=0.33 && zone_y<=0.67)
+            center.ra += 0.5f;
+        // Right
+        else if (zone_x < 0.33 &&
+                zone_y>=0.33 && zone_y<=0.67)
+            center.ra -= 0.5f;
+        // Top
+        else if (zone_y < 0.33 &&
+                zone_x>=0.33 && zone_x<=0.67)
+            center.de += 5.f;
+        // Bottom
+        else if (zone_y > 0.67 &&
+                zone_x>=0.33 && zone_x<=0.67)
+            center.de -= 5.f;
+        // Bottom left
+        else if (zone_x < 0.33 && zone_y > 0.67)
+            zoom /= 2;
+        // Bottom right
+        else if (zone_x > 0.67 && zone_y > 0.67)
+            zoom *= 2;
+
+        else
+            super.onTouchEvent(event);
+
+        invalidate();
+        return super.onTouchEvent(event);
 	}
 	
 
